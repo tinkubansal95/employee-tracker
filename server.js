@@ -129,3 +129,23 @@ inquirer
 })
 };
 
+function addDepartment() {
+        inquirer
+        .prompt([
+          {
+            name: 'dept',
+            type: 'input',
+            message: "What is the name of department you would like to add?",
+          }
+        ])
+        .then(({dept}) => {
+         connection.query('Insert into department set ?',
+           {
+             name : dept,
+           }, (err, res) => {
+             if (err) throw err;
+             console.log("Department added sucessfully!");
+             startApp();
+            });
+         });
+};
