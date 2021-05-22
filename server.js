@@ -64,6 +64,14 @@ const startApp = () => {
           viewDepartments();
           break;
 
+        case 'View Roles':
+          viewRoles();
+          break;
+
+        case 'View All Employees':
+          viewAllEmployees();
+          break;
+
         default:
           console.log(`Invalid action: ${answer.action}`);
           break;
@@ -214,4 +222,22 @@ function viewDepartments(){
   });
 }
 
+function viewRoles(){
+  const query = 'SELECT title,salary,name FROM role INNER JOIN department ON (role.department_id = department.id)';
+  connection.query(query, (err, res) => {
+    console.table('Roles',res);
+    startApp();
+  });
+}
 
+function viewAllEmployees(){
+  const query = `SELECT emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
+                    role.salary,emp2.first_name as "manager"
+                    FROM employee emp1 INNER JOIN role ON (emp1.role_id = role.id)
+                    left join employee emp2 ON(emp1.manager_id = emp2.id)
+                    left join department dept ON(role.department_id = dept.id);`;
+          connection.query(query, (err, res) => {
+            console.table('Employees',res);
+            startApp();
+  });
+}
