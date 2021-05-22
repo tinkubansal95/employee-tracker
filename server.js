@@ -30,16 +30,16 @@ const startApp = () => {
       type: 'rawlist',
       message: 'What would you like to do?',
       choices: [
-        'Add Department',   
-        'Add Role',
-        'Add Employee',
+        'View All Employees',
         'View Departments',
         'View Roles',
-        'View All Employees',
         'View Employees by Manager',
         'View Employees by Department',
         'View the total utilized budget of a department',
-        'Update Employee roles',
+        'Add Department',   
+        'Add Role',
+        'Add Employee',
+        "Update Employee's roles",
         "Update Employee's Manager",
         'Delete Department',
         'Delete Role',
@@ -70,6 +70,10 @@ const startApp = () => {
 
         case 'View All Employees':
           viewAllEmployees();
+          break;
+
+        case "Update Employee's roles":
+          updateEmployeeRole();
           break;
 
         default:
@@ -241,3 +245,63 @@ function viewAllEmployees(){
             startApp();
   });
 }
+
+function updateEmployeeRole() {
+  let roles =[];
+  let employee =[];
+  const query1 = 'SELECT title FROM role';
+  connection.query(query1, (err, res) => {
+  res.forEach(({title}) => {
+        roles.push(title);
+  });  
+});
+const query2 = 'select first_name from employee';
+  connection.query(query2, (err, res) => {
+  res.forEach(({first_name}) => {
+        employee.push(first_name);
+  });
+  inquirer
+.prompt([
+  {
+    name: 'emp',
+    type: 'rawlist',
+    message: "Which employee's role do you want to update?",
+    choices: employee,
+  },
+  {
+    name: 'role',
+    type: 'rawlist',
+    message: "Which role you want to set for the selected Employee?",
+    choices: roles,
+  },
+])
+.then(({emp, role}) => {
+  let roleEmp ;
+  let query = `select id from role where title = '${role}'`;
+  connection.query(query, (err, res) => {
+      roleEmp = res[0].id;
+      let empSelected ;
+      query = `select id from employee where first_name = '${emp}'`;
+       connection.query(query, (err, res) => {
+        if (err) throw err;
+         empSelected = res[0].id;
+         query = connection.query(
+          'UPDATE employee SET ? WHERE ?',
+          [
+            {
+              role_Id: roleEmp,
+            },
+            {
+              id: empSelected,
+            },
+          ], (err, res) => {
+             if (err) throw err;
+             console.log("Employee's role updated sucessfully!");
+             startApp();
+            });
+  });
+  }); 
+})
+  });
+
+};
