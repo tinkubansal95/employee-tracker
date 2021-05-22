@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 const path = require("path");
 require('dotenv').config({path : path.join(__dirname,"./.env")});
+const cTable = require('console.table');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -29,7 +30,7 @@ const startApp = () => {
       type: 'rawlist',
       message: 'What would you like to do?',
       choices: [
-        'Add Department',
+        'Add Department',   
         'Add Role',
         'Add Employee',
         'View Departments',
@@ -57,6 +58,10 @@ const startApp = () => {
         
         case 'Add Employee':
           addEmployee();
+          break;
+
+        case 'View Departments':
+          viewDepartments();
           break;
 
         default:
@@ -200,5 +205,13 @@ inquirer
   }); 
 })
 };
+
+function viewDepartments(){
+  const query = 'SELECT name FROM department';
+  connection.query(query, (err, res) => {
+    console.table('Department Names',res);
+    startApp();
+  });
+}
 
 
