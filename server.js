@@ -82,6 +82,10 @@ const startApp = () => {
         case "Update Employee's Manager":
           updateEmployeeManager();
           break;
+          
+        case "Delete Employee":
+          deleteEmployee();
+          break;
 
         default:
           console.log(`Invalid action: ${answer.action}`);
@@ -242,7 +246,7 @@ function viewRoles(){
 }
 
 function viewAllEmployees(){
-  const query = `SELECT emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
+  const query = `SELECT emp1.id,emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
                     role.salary,emp2.first_name as "manager"
                     FROM employee emp1 INNER JOIN role ON (emp1.role_id = role.id)
                     left join employee emp2 ON(emp1.manager_id = emp2.id)
@@ -254,7 +258,7 @@ function viewAllEmployees(){
 }
 
 function viewAllEmployeesByManager(){
-  const query = `SELECT emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
+  const query = `SELECT emp1.id,emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
                     role.salary,emp2.first_name as "manager"
                     FROM employee emp1 INNER JOIN role ON (emp1.role_id = role.id)
                     left join employee emp2 ON(emp1.manager_id = emp2.id)
@@ -383,5 +387,44 @@ function updateEmployeeManager() {
   }); 
 })
   });
+
+};
+
+function deleteEmployee() {
+  let emp =[];
+  const query1 = 'SELECT first_name FROM employee';
+  connection.query(query1, (err, res) => {
+  res.forEach(({first_name}) => {
+        emp.push(first_name);    
+  });  
+  inquirer
+  .prompt([
+    {
+      name: 'empSel',
+      type: 'rawlist',
+      message: "Which employee you want to delete?",
+      choices: emp,
+    },
+  ])
+  .then(({empSel}) => {
+    let empSelected ;
+    let query = `select id from employee where first_name = '${empSel}'`;
+    connection.query(query, (err, res) => {
+        empSelected = res[0].id;
+           query = connection.query(
+            'DELETE FROM employee WHERE ?',
+            [
+              {
+                id: empSelected,
+              },
+            ], (err, res) => {
+               if (err) throw err;
+               console.log("Employee deleted sucessfully!");
+               startApp();
+              });
+  
+    }); 
+  })
+});
 
 };
