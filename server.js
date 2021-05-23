@@ -34,7 +34,6 @@ const startApp = () => {
         'View Departments',
         'View Roles',
         'View Employees by Manager',
-        'View Employees by Department',
         'View the total utilized budget of a department',
         'Add Department',   
         'Add Role',
@@ -70,6 +69,10 @@ const startApp = () => {
 
         case 'View All Employees':
           viewAllEmployees();
+          break;
+
+        case 'View Employees by Manager':
+          viewAllEmployeesByManager();
           break;
 
         case "Update Employee's role":
@@ -244,6 +247,19 @@ function viewAllEmployees(){
                     FROM employee emp1 INNER JOIN role ON (emp1.role_id = role.id)
                     left join employee emp2 ON(emp1.manager_id = emp2.id)
                     left join department dept ON(role.department_id = dept.id);`;
+          connection.query(query, (err, res) => {
+            console.table('Employees',res);
+            startApp();
+  });
+}
+
+function viewAllEmployeesByManager(){
+  const query = `SELECT emp1.first_name,emp1.last_name,role.title,dept.name as "Department",
+                    role.salary,emp2.first_name as "manager"
+                    FROM employee emp1 INNER JOIN role ON (emp1.role_id = role.id)
+                    left join employee emp2 ON(emp1.manager_id = emp2.id)
+                    left join department dept ON(role.department_id = dept.id)
+                    order by emp2.first_name;`;
           connection.query(query, (err, res) => {
             console.table('Employees',res);
             startApp();
