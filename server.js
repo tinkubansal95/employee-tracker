@@ -34,14 +34,11 @@ const startApp = () => {
         'View Departments',
         'View Roles',
         'View Employees by Manager',
-        'View the total utilized budget of a department',
         'Add Department',   
         'Add Role',
         'Add Employee',
         "Update Employee's role",
         "Update Employee's Manager",
-        'Delete Department',
-        'Delete Role',
         'Delete Employee'
       ],
     })

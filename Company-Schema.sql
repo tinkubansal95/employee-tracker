@@ -65,7 +65,7 @@ Insert into employee(first_name,last_name,role_id,manager_id)
 values('Sandy','Grang',6,3);
 Insert into employee(first_name,last_name,role_id,manager_id) 
 values('Raman','Bowden',7,2);
-SELECT name from department;
+
 SELECT * FROM department;
 SELECT * FROM role;
 SELECT * FROM employee;
